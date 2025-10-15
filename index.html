@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泌尿科 ESG 影響力儀表板 (概念說明)</title>
+    <!-- 載入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 載入 Inter 字體，提供專業外觀 */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .score-bar { transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out; }
+        .card-bg-e { background-color: #e6f7e9; } /* Light Green */
+        .card-bg-s { background-color: #e6f0fa; } /* Light Blue */
+        .card-bg-g { background-color: #f7f3e6; } /* Light Yellow */
+        
+        /* 確保動態顏色類別被 Tailwind 識別 */
+        .bg-primary-green { background-color: #4CAF50; }
+        .border-primary-green { border-color: #4CAF50; }
+        .ring-primary-blue { --tw-ring-color: #2196F3; }
+        .ring-primary-green { --tw-ring-color: #4CAF50; }
+        .ring-primary-yellow { --tw-ring-color: #FFC107; }
+
+        /* 隱藏/顯示的簡易過渡效果 */
+        .detail-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
+        }
+        .detail-content.show {
+            max-height: 500px; /* 足夠大的數值以容納內容 */
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-green': '#4CAF50',
+                        'primary-blue': '#2196F3',
+                        'primary-yellow': '#FFC107',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 antialiased">
+
+    <div id="app" class="min-h-screen p-4 sm:p-8 pb-32">
+        
+        <!-- Header -->
+        <header class="text-center mb-6 max-w-3xl mx-auto">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-800 mb-2">泌尿科 ESG 影響力儀表板</h1>
+            <!-- 根據用戶要求，將追蹤指標換行 -->
+            <p class="text-gray-600 text-lg mb-4">點擊行動項目，即時查看詳細實施策略與<br>追蹤指標。</p>
+            
+            <!-- Explanation Button -->
+            <button onclick="showExplanationModal()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-primary-blue hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-blue transition duration-150">
+                <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                何謂「影響力計算器」？
+            </button>
+        </header>
+
+        <!-- ESG Pillars Container -->
+        <div id="pillars-container" class="space-y-6 max-w-4xl mx-auto">
+            <!-- Content will be injected by JavaScript -->
+        </div>
+        
+    </div>
+
+    <!-- Explanation Modal -->
+    <div id="explanation-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 opacity-0 invisible flex items-center justify-center p-4" onclick="hideExplanationModal()">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+            <div class="p-6 sm:p-8">
+                <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 border-b pb-2 border-primary-green">「影響力計算器」的意義與用途</h2>
+                
+                <p class="text-lg text-gray-700 mb-6">
+                    「影響力計算器」的主要意義在於將抽象的 **ESG（環境、社會、治理）** 行動**具體化和量化**。
+                    它本質上是一個 **規劃與模擬工具 (Planning and Simulation Tool)**，其用途可以從四個主要層面來理解：
+                </p>
+
+                <div class="space-y-6">
+                    <!-- 1. 策略規劃 -->
+                    <div>
+                        <h3 class="text-xl font-bold text-primary-green mb-2 flex items-center">
+                            1. 策略規劃與行動優先級排序
+                        </h3>
+                        <p class="text-gray-600 mb-2">
+                            計算器的核心目的，是幫助泌尿科機構或診所的決策者 **視覺化** 不同永續行動的**相對重要性**。
+                        </p>
+                        <ul class="list-disc ml-6 space-y-2 text-gray-600">
+                            <li>
+                                **量化決策：** 每個行動都有一個特定的**權重分數**（例如 12 分、9 分）。這代表該行動在 ESG 框架下，對於行業或社會具有的**潛在影響力**。
+                            </li>
+                            <li>
+                                **資源配置：** 通過模擬，您可以清楚看到投入哪一項行動（例如：**遠距醫療** 12 分 vs. **更換 LED 燈** 10 分），能在 E、S、G 三個面向中獲得最高的綜合回報，從而幫助您進行更有效的**預算和資源分配**。
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 2. 內部基準追蹤 -->
+                    <div>
+                        <h3 class="text-xl font-bold text-primary-blue mb-2 flex items-center">
+                            2. 內部基準追蹤 (Internal Benchmark)
+                        </h3>
+                        <p class="text-gray-600 mb-2">
+                            它是一種 **「目標設定與進度追蹤」** 的基準：
+                        </p>
+                        <ul class="list-disc ml-6 space-y-2 text-gray-600">
+                            <li>
+                                **內部追蹤：** 該計算器將滿分設定為所有行動權重的總和（現在為 **100 分**）。您每勾選一個行動，就代表該機構**已採納或承諾採納**該項實踐。這讓您能夠計算出一個清晰的 **「實現分數」 (Actualized Score)**。
+                            </li>
+                            <li>
+                                **設定目標：** 您可以利用這個分數作為未來年度的 **內部目標 (Goal Setting)**。比如，今年的目標是達到 60/100 分，明年增加到 80/100 分。
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- 3. 分數解讀與國際接軌 (New Section) -->
+                    <div>
+                        <h3 class="text-xl font-bold text-primary-yellow mb-2 flex items-center">
+                            3. 影響力分數的深度解讀與國際接軌
+                        </h3>
+                        <p class="text-gray-600 font-semibold mt-4 mb-2">分數意義的加強解讀：</p>
+                        <ul class="list-disc ml-6 space-y-2 text-gray-600">
+                            <li>
+                                **高分意義 (例如 > 80/100)：** 表示機構在 ESG 實踐上已達到**成熟 (Mature)** 階段。不僅遵循基本法規，更在**供應鏈審核**、**遠距醫療創新**、**數據保護**等高權重領域做出卓越貢獻。這是**建立行業領導地位**的基礎。
+                            </li>
+                            <li>
+                                **低分意義 (例如 < 50/100)：** 表示機構的 ESG 仍處於**基礎 (Foundational)** 階段。應優先關注 12 分或 10 分的高權重行動，以**最大化影響力**和**降低潛在的營運風險** (如數據洩露、環保法規不符)。
+                            </li>
+                        </ul>
+                        <p class="text-gray-600 font-semibold mt-4 mb-2">與國際接軌：重大性原則 (Materiality)：</p>
+                        <ul class="list-disc ml-6 space-y-2 text-gray-600">
+                            <li>
+                                本計算器的權重設計參考了 **GRI (全球報告倡議)** 和 **SASB (永續會計準則委員會)** 等國際標準中的 **「重大性原則」**。
+                            </li>
+                            <li>
+                                對於醫療機構而言，**病患數據隱私 (G)**、**醫療廢棄物管理 (E)** 和**醫療服務可近性 (S)** 是最具實質性影響的議題，因此被賦予更高的權重。
+                            </li>
+                            <li>
+                                採用加權模式，能確保您的行動與國際上對醫療業 ESG 表現的關注點保持一致。
+                            </li>
+                        </ul>
+                    </div>
+
+
+                    <!-- 4. 員工教育與意識提升 (Moved to 4th) -->
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2 flex items-center">
+                            4. 員工教育與意識提升
+                        </h3>
+                        <ul class="list-disc ml-6 space-y-2 text-gray-600">
+                            <li>
+                                **化抽象為具體：** ESG 往往是一個宏大而抽象的概念。計算器將其轉化為泌尿科日常運營中的**可執行任務**（如：如何處理廢棄藥物、如何保護病人數據）。
+                            </li>
+                            <li>
+                                **學習框架：** 通過點擊和查看展開的詳細內容，所有員工都能快速理解 E、S、G 三個面向各自包含的實際內容，以及這些行動為何對機構的永續發展至關重要。
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <p class="mt-6 pt-4 border-t text-sm italic text-gray-500 text-right">
+                        總結來說，這個工具是幫助您**規劃**和**溝通** ESG 策略的起點，提供一個將行動**數值化**的模擬環境。
+                    </p>
+                </div>
+                
+                <div class="mt-6 text-center">
+                    <button onclick="hideExplanationModal()" class="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">
+                        關閉
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Overall Score Footer (Fixed for Mobile Visibility) -->
+    <div id="overall-score-footer" class="fixed bottom-0 left-0 right-0 p-4 bg-white shadow-[0_-5px_15px_rgba(0,0,0,0.1)] z-20">
+        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+            <div class="text-lg font-bold text-gray-700">總體 ESG 影響力分數:</div>
+            <div class="flex items-center space-x-4 w-full sm:w-auto">
+                <div class="text-3xl font-extrabold" id="overall-score-display">0 / 100</div>
+                <div class="w-full sm:w-48 h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div id="overall-score-bar" class="score-bar h-full rounded-full" style="width: 0%; background-color: #ccc;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // 設定 Firebase 相關變數（此處僅為虛擬，無需實際初始化）
+        const DUMMY_API_KEY = "";
+
+        // *** 權重已調整，確保總分為 100 分 ***
+        const pillarsData = [
+            {
+                id: 'E',
+                name: '環境 (Environmental)',
+                color: 'primary-green',
+                icon: '🌍',
+                description: '關注醫療廢棄物管理、能源效率與資源節約。',
+                actions: [
+                    { 
+                        name: '使用可重複滅菌的器械代替一次性用品', 
+                        weight: 12, checked: false, // 原 10 + 2
+                        detail: '採用可高壓滅菌或重複使用的手術器械，可以大幅減少一次性塑膠和化學廢棄物。這需要初期較高投資，但能降低長期採購成本，並減輕焚化爐的負擔。',
+                        example_metric: '年平均一次性器械用量（件/手術）',
+                    },
+                    { 
+                        name: '將照明系統全面更換為節能LED燈', 
+                        weight: 10, checked: false, // 原 8 + 2
+                        detail: 'LED 照明比傳統燈具節省 75% 以上的能源，並有更長的使用壽命，減少更換和廢棄。安裝智能感應器可在無人區域自動關閉，進一步優化電力使用。',
+                        example_metric: '年度總用電量 (kWh)',
+                    },
+                    { 
+                        name: '實施無紙化病歷與電子化處方籤', 
+                        weight: 7, checked: false, 
+                        detail: '採用電子病歷 (EMR) 和病人入口網站進行預約、處方和報告傳輸，不僅節省紙張和碳粉，還能提高數據檢索效率和安全性。',
+                        example_metric: '年度紙張消耗量（令）',
+                    },
+                    { 
+                        name: '建立藥物和化學廢棄物的專門回收處理流程', 
+                        weight: 5, checked: false, 
+                        detail: '建立清晰的分流和回收指南，特別是針對化療藥物、放射性廢棄物和電子廢棄物。與專業的環保處理廠商合作，確保廢棄物不會污染水體或土壤。',
+                        example_metric: '醫療廢棄物回收率 (%)',
+                    },
+                ]
+            }, // E Total: 34
+            {
+                id: 'S',
+                name: '社會 (Social)',
+                color: 'primary-blue',
+                icon: '🤝',
+                description: '關注病人照護品質、員工福祉與社區健康公平性。',
+                actions: [
+                    { 
+                        name: '提供遠距醫療/視訊諮詢服務，擴大偏遠地區可近性', 
+                        weight: 12, checked: false, // 原 10 + 2
+                        detail: '遠距諮詢和追蹤服務特別適合慢性泌尿系統疾病患者或居住在偏遠地區的病人。這能減少病人往返醫院的交通時間和碳足跡，並提高醫療服務的便利性。',
+                        example_metric: '遠距醫療服務覆蓋率 (%)',
+                    },
+                    { 
+                        name: '定期舉辦前列腺癌或泌尿道感染免費社區篩檢活動', 
+                        weight: 9, checked: false, // 原 8 + 1
+                        detail: '透過免費篩檢活動（如 PSA 檢測或尿液分析），可以早期發現前列腺癌或泌尿道感染等疾病，顯著提高治療成功率，並減少後期高成本的治療需求。',
+                        example_metric: '社區篩檢參與人數',
+                    },
+                    { 
+                        name: '建立員工心理健康支持計畫，應對醫療壓力', 
+                        weight: 7, checked: false, 
+                        detail: '醫療人員面臨高強度的工作壓力和燃盡風險。提供心理諮詢、彈性排班和專業發展機會，能提高員工留任率和工作滿意度，進而穩定醫療服務品質。',
+                        example_metric: '員工留任率 (%)',
+                    },
+                    { 
+                        name: '確保醫療團隊具備多元背景並提供語言翻譯服務', 
+                        weight: 5, checked: false, 
+                        detail: '確保所有患者，無論其種族、經濟背景或語言能力，都能獲得高品質照護。提供文化適應性培訓和專業翻譯服務，是實現醫療公平的關鍵。',
+                        example_metric: '語言服務使用率 (%)',
+                    },
+                ]
+            }, // S Total: 33
+            {
+                id: 'G',
+                name: '治理 (Governance)',
+                color: 'primary-yellow',
+                icon: '⚖️',
+                description: '關注營運透明度、數據安全與道德採購。',
+                actions: [
+                    { 
+                        name: '對供應鏈進行道德審查（例如：無童工、環保認證器械）', 
+                        weight: 12, checked: false, // 原 10 + 2
+                        detail: '審查醫療耗材供應商的社會和環境標準，確保其產品來自合規、負責任的來源。這降低了採購風險，並支持更廣泛的全球永續發展目標。',
+                        example_metric: '供應鏈中通過 ESG 審核的比例 (%)',
+                    },
+                    { 
+                        name: '實施高標準的病人數據加密和隱私保護協定 (GDPR/HIPAA)', 
+                        weight: 9, checked: false, // 原 8 + 1
+                        detail: '投資於先進的網絡安全系統和員工培訓，以保護敏感的病人醫療記錄 (EHR)。遵守國際隱私法規不僅是法律要求，也是建立病人信任的基石。',
+                        example_metric: '年度數據洩露事件數量（理想值為 0）',
+                    },
+                    { 
+                        name: '建立公開透明的臨床結果報告機制', 
+                        weight: 7, checked: false, 
+                        detail: '定期向公眾和利益相關者報告臨床結果（如手術成功率、感染率）和 ESG 表現。高透明度能增強機構信譽，並促進持續的品質改進。',
+                        example_metric: '關鍵績效指標 (KPI) 公開報告頻率（季度/年度）',
+                    },
+                    { 
+                        name: '成立由多部門組成的ESG專責委員會', 
+                        weight: 5, checked: false, 
+                        detail: '設立一個由管理層、臨床醫生和行政人員組成的正式委員會，負責制定、監督和推動 ESG 策略。這確保了永續發展目標與核心業務決策保持一致。',
+                        example_metric: 'ESG 委員會會議頻率和決策執行率 (%)',
+                    },
+                ]
+            } // G Total: 33
+        ];
+
+        // 總滿分是所有權重的總和
+        // MAX_SCORE 現在會正確計算為 34 + 33 + 33 = 100
+        const MAX_SCORE = pillarsData.reduce((total, pillar) => 
+            total + pillar.actions.reduce((sum, action) => sum + action.weight, 0), 0);
+        
+        // --- Core Logic Functions ---
+
+        /**
+         * 根據百分比返回進度條顏色。
+         * @param {number} percentage - 當前分數百分比
+         */
+        function getScoreColor(percentage) {
+            if (percentage < 33) return '#F44336'; // Red
+            if (percentage < 66) return '#FF9800'; // Orange
+            return '#4CAF50'; // Green
+        }
+
+        /**
+         * 計算並更新總體 ESG 分數和進度條。
+         */
+        function updateOverallScore() {
+            let currentScore = 0;
+            pillarsData.forEach(pillar => {
+                pillar.actions.forEach(action => {
+                    if (action.checked) {
+                        currentScore += action.weight;
+                    }
+                });
+            });
+
+            const percentage = (currentScore / MAX_SCORE) * 100;
+
+            const scoreDisplay = document.getElementById('overall-score-display');
+            const scoreBar = document.getElementById('overall-score-bar');
+
+            scoreDisplay.textContent = `${currentScore} / ${MAX_SCORE}`;
+            scoreBar.style.width = `${percentage}%`;
+            scoreBar.style.backgroundColor = getScoreColor(percentage);
+        }
+
+        /**
+         * 計算並更新特定 ESG 柱子的分數和進度條。
+         * @param {string} pillarId - 柱子 ID (E, S, G)
+         */
+        function updatePillarScore(pillarId) {
+            const pillar = pillarsData.find(p => p.id === pillarId);
+            if (!pillar) return;
+
+            const totalPillarScore = pillar.actions.reduce((sum, a) => sum + a.weight, 0);
+            const currentPillarScore = pillar.actions.filter(a => a.checked).reduce((sum, a) => sum + a.weight, 0);
+            const pillarPercentage = (currentPillarScore / totalPillarScore) * 100;
+            
+            const scoreDisplay = document.getElementById(`pillar-score-${pillar.id}`);
+            const scoreBar = document.getElementById(`pillar-bar-${pillar.id}`);
+
+            // 確保元素存在後再更新
+            if (scoreDisplay) scoreDisplay.innerHTML = `${currentPillarScore}</span><span class="text-lg text-gray-500"> / ${totalPillarScore}`;
+            if (scoreBar) scoreBar.style.width = `${pillarPercentage}%`;
+        }
+
+        /**
+         * 處理點擊事件來切換行動的選中狀態並切換詳細內容的顯示。
+         * @param {string} pillarId - 柱子 ID (E, S, G)
+         * @param {number} actionIndex - 行動在陣列中的索引
+         */
+        function toggleAction(pillarId, actionIndex) {
+            const pillar = pillarsData.find(p => p.id === pillarId);
+            if (pillar) {
+                const action = pillar.actions[actionIndex];
+                
+                // 1. 核心邏輯：切換狀態
+                action.checked = !action.checked;
+                
+                // 2. 更新分數
+                updateOverallScore();
+                updatePillarScore(pillarId); // 更新單個柱子分數
+
+                // 3. 視覺更新：找到相關DOM元素並切換狀態
+                const actionKey = `${pillarId}-${actionIndex}`;
+                const container = document.querySelector(`.action-container[data-action-key="${actionKey}"]`);
+                const detailPanel = document.getElementById(`detail-${pillarId}-${actionIndex}`);
+                const indicator = container.querySelector('.action-item-indicator');
+                const arrow = container.querySelector('.detail-arrow');
+                
+                const pillarColorClass = `ring-${pillar.color}`; 
+                const iconSvg = '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
+                const greenBgClass = 'bg-primary-green';
+                const greenBorderClass = 'border-primary-green';
+
+                if (container && detailPanel && indicator && arrow) {
+                    if (action.checked) {
+                        // 狀態：選中並顯示細節
+                        container.classList.add('ring-2', 'ring-inset', pillarColorClass);
+                        indicator.classList.remove('bg-white', 'border-gray-300');
+                        indicator.classList.add(greenBgClass, greenBorderClass);
+                        indicator.innerHTML = iconSvg;
+
+                        detailPanel.classList.add('show');
+                        arrow.classList.add('rotate-90');
+                        arrow.classList.remove('rotate-0');
+                        
+                    } else {
+                        // 狀態：未選中並隱藏細節
+                        container.classList.remove('ring-2', 'ring-inset', pillarColorClass);
+                        indicator.classList.remove(greenBgClass, greenBorderClass);
+                        indicator.classList.add('bg-white', 'border-gray-300');
+                        indicator.innerHTML = '';
+                        
+                        detailPanel.classList.remove('show');
+                        arrow.classList.remove('rotate-90');
+                        arrow.classList.add('rotate-0');
+                    }
+                }
+            }
+        }
+        
+        /**
+         * 顯示解釋模態框。
+         */
+        function showExplanationModal() {
+            const modal = document.getElementById('explanation-modal');
+            modal.classList.remove('invisible', 'opacity-0');
+            modal.classList.add('visible', 'opacity-100');
+        }
+
+        /**
+         * 隱藏解釋模態框。
+         */
+        function hideExplanationModal() {
+            const modal = document.getElementById('explanation-modal');
+            modal.classList.remove('visible', 'opacity-100');
+            modal.classList.add('invisible', 'opacity-0');
+        }
+
+
+        // --- Rendering Functions ---
+
+        /**
+         * 渲染單個 ESG 柱子卡片。
+         * @param {object} pillar - 柱子數據
+         */
+        function renderPillarCard(pillar) {
+            const pillarElement = document.createElement('div');
+            pillarElement.className = `p-6 rounded-2xl shadow-lg ring-1 ring-opacity-50 ring-${pillar.color} card-bg-${pillar.id.toLowerCase()} backdrop-blur-sm`;
+            
+            const totalPillarScore = pillar.actions.reduce((sum, a) => sum + a.weight, 0);
+            const currentPillarScore = pillar.actions.filter(a => a.checked).reduce((sum, a) => sum + a.weight, 0);
+            const pillarPercentage = (currentPillarScore / totalPillarScore) * 100;
+
+            const pillarColorHex = tailwind.config.theme.extend.colors[pillar.color];
+
+            let actionsHtml = pillar.actions.map((action, index) => {
+                const isChecked = action.checked;
+                const detailId = `detail-${pillar.id}-${index}`;
+                const actionKey = `${pillar.id}-${index}`;
+
+                // 移除 LaTeX 符號，準備顯示
+                const cleanDetail = action.detail.replace(/\\text{/g, '').replace(/}/g, '').replace(/\$/g, '');
+                const cleanMetric = action.example_metric.replace(/\\text{/g, '').replace(/}/g, '').replace(/\$/g, '');
+
+                return `
+                    <div data-action-key="${actionKey}" class="action-container rounded-xl overflow-hidden shadow-sm transition duration-200 ${isChecked ? `ring-2 ring-inset ring-primary-blue bg-white/90` : 'bg-white hover:shadow-md'}">
+                        <div 
+                            class="flex items-center p-3 cursor-pointer"
+                            onclick="toggleAction('${pillar.id}', ${index})"
+                        >
+                            <!-- Checkbox/Indicator -->
+                            <div class="action-item-indicator w-5 h-5 border-2 rounded-md flex items-center justify-center transition duration-150 
+                                ${isChecked ? 'bg-primary-green border-primary-green' : 'bg-white border-gray-300'}">
+                                ${isChecked ? '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
+                            </div>
+                            
+                            <span class="ml-3 text-base text-gray-800 flex-1">
+                                ${action.name} 
+                                <span class="text-sm font-semibold text-gray-500 ml-2">(${action.weight}分)</span>
+                            </span>
+                            
+                            <!-- Detail Indicator Arrow -->
+                            <svg class="detail-arrow w-5 h-5 text-gray-400 transform transition duration-200 ${isChecked ? 'rotate-90' : 'rotate-0'}" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+
+                        <!-- Detail Content - Local Display (KPI moved to top) -->
+                        <div id="${detailId}" class="detail-content bg-gray-50 border-t border-gray-200 ${isChecked ? 'show' : ''}">
+                            <div class="space-y-3 p-4">
+                                
+                                <!-- 📊 追蹤指標 (KPI) - 移至頂部 -->
+                                <h4 class="text-sm font-bold text-gray-700">📊 追蹤指標 (KPI)：</h4>
+                                <p class="text-${pillar.color} font-mono text-xs p-2 bg-gray-100 rounded-lg">${cleanMetric}</p>
+
+                                <!-- 實施策略與效益 - 放在下方，並加上上邊距以區隔 -->
+                                <h4 class="text-sm font-bold text-gray-700 mt-2">實施策略與效益：</h4>
+                                <p class="text-gray-600 text-sm">${cleanDetail}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            pillarElement.innerHTML = `
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800 flex items-center mb-1">
+                            ${pillar.icon} <span class="ml-3">${pillar.name}</span>
+                        </h2>
+                        <p class="text-gray-600 text-sm">${pillar.description}</p>
+                    </div>
+                    <div class="text-right">
+                         <span class="text-3xl font-extrabold text-${pillar.color}" id="pillar-score-${pillar.id}">${currentPillarScore}</span><span class="text-lg text-gray-500"> / ${totalPillarScore}</span>
+                    </div>
+                </div>
+
+                <div class="w-full h-2 mb-6 bg-gray-200 rounded-full overflow-hidden">
+                    <div id="pillar-bar-${pillar.id}" class="score-bar h-full rounded-full" style="width: ${pillarPercentage}%; background-color: ${pillarColorHex};"></div>
+                </div>
+
+                <div class="space-y-3">
+                    <h3 class="text-lg font-semibold text-gray-700 border-b border-gray-300 pb-1">具體實踐行動：</h3>
+                    ${actionsHtml}
+                </div>
+            `;
+            return pillarElement;
+        }
+
+        /**
+         * 渲染所有 ESG 柱子到容器中。
+         */
+        function renderPillars() {
+            const container = document.getElementById('pillars-container');
+            container.innerHTML = ''; // 清空舊內容
+            pillarsData.forEach(pillar => {
+                container.appendChild(renderPillarCard(pillar));
+            });
+        }
+
+        // --- Initialization ---
+        window.onload = function() {
+            // 將函數暴露給 HTML 元素的 onclick
+            window.toggleAction = toggleAction; 
+            window.showExplanationModal = showExplanationModal;
+            window.hideExplanationModal = hideExplanationModal;
+            
+            // 初始渲染
+            renderPillars();
+            updateOverallScore();
+
+            console.log("泌尿科 ESG 影響力儀表板已載入。點擊行動項目以切換狀態並查看細節。");
+        };
+
+    </script>
+</body>
+</html>
+
